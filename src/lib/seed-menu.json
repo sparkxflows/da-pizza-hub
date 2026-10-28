@@ -1,0 +1,736 @@
+[
+  {
+    "id": "da-paneer-special",
+    "name": "Da Paneer Special",
+    "description": "Black olive, jalapeno, corn, capsicum, red pepper & paneer, pasta topping",
+    "category": "royal-special",
+    "image": "/images/pizza-named/da-paneer-special.webp",
+    "isBestSeller": true,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 250,
+      "medium": 430,
+      "large": 599
+    }
+  },
+  {
+    "id": "tandoori-pizza",
+    "name": "Tandoori Pizza",
+    "description": "Onion, red pepper, capsicum, corn, jalapeno, spicy tandoori sauce",
+    "category": "royal-special",
+    "image": "/images/pizza-named/tandoori-pizza.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 250,
+      "medium": 430,
+      "large": 599
+    }
+  },
+  {
+    "id": "veg-extra-vaganza",
+    "name": "Veg Extra Vaganza",
+    "description": "Onion, capsicum, mushroom, corn, black olive, jalapeno, tomato, extra cheese",
+    "category": "royal-special",
+    "image": "/images/pizza-named/veg-extra-vaganza.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 250,
+      "medium": 430,
+      "large": 599
+    }
+  },
+  {
+    "id": "tandoori-paneer-pizza",
+    "name": "Tandoori Paneer Pizza",
+    "description": "Onion, red pepper, capsicum, jalapeno, spicy tandoori paneer",
+    "category": "royal-special",
+    "image": "/images/pizza-named/tandoori-paneer-pizza.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 250,
+      "medium": 430,
+      "large": 599
+    }
+  },
+  {
+    "id": "chefs-special",
+    "name": "Chef's Special",
+    "description": "Mushroom, jalapeno, corn, capsicum, red pepper & paneer",
+    "category": "veg-special",
+    "image": "/images/pizza-named/chefs-special.webp",
+    "isBestSeller": true,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 219,
+      "medium": 410,
+      "large": 579
+    }
+  },
+  {
+    "id": "veg-exotica",
+    "name": "Veg. Exotica",
+    "description": "Onion, capsicum, red pepper, black olive & cheese",
+    "category": "veg-special",
+    "image": "/images/pizza-named/veg-exotica.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 219,
+      "medium": 410,
+      "large": 579
+    }
+  },
+  {
+    "id": "deluxe-veggie-delight",
+    "name": "Deluxe Veggie Delight",
+    "description": "Onion, capsicum, mushroom, corn, paneer & cheese",
+    "category": "veg-special",
+    "image": "/images/pizza-named/deluxe-veggie-delight.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 219,
+      "medium": 410,
+      "large": 579
+    }
+  },
+  {
+    "id": "veggie-paradise",
+    "name": "Veggie Paradise",
+    "description": "Capsicum, red pepper, corn, black olive",
+    "category": "veg-special",
+    "image": "/images/pizza-named/veggie-paradise.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 219,
+      "medium": 410,
+      "large": 579
+    }
+  },
+  {
+    "id": "farm-house-pizza",
+    "name": "Farm House Pizza",
+    "description": "Capsicum, onion, mushroom, tomato & cheese",
+    "category": "veg-feast",
+    "image": "/images/pizza-named/farm-house-pizza.webp",
+    "isBestSeller": true,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 199,
+      "medium": 379,
+      "large": 499
+    }
+  },
+  {
+    "id": "peppy-paneer-special",
+    "name": "Peppy Paneer Special",
+    "description": "Paneer, capsicum, red pepper",
+    "category": "veg-feast",
+    "image": "/images/pizza-named/peppy-paneer-special.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 199,
+      "medium": 379,
+      "large": 499
+    }
+  },
+  {
+    "id": "gourmet-pizza",
+    "name": "Gourmet Pizza",
+    "description": "Corn, jalapeno, black olive & cheese",
+    "category": "veg-feast",
+    "image": "/images/pizza-named/gourmet-pizza.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 199,
+      "medium": 379,
+      "large": 499
+    }
+  },
+  {
+    "id": "maxican-green",
+    "name": "Maxican Green",
+    "description": "Onion, capsicum, jalapeno, tomato & cheese",
+    "category": "veg-feast",
+    "image": "/images/pizza-named/maxican-green.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 199,
+      "medium": 379,
+      "large": 499
+    }
+  },
+  {
+    "id": "spicy-triple-tangy-twist",
+    "name": "Spicy Triple Tangy Twist",
+    "description": "Corn, jalapeno & tomato",
+    "category": "veg-delight",
+    "image": "/images/pizza-named/spicy-triple-tangy-twist.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 169,
+      "medium": 329,
+      "large": 479
+    }
+  },
+  {
+    "id": "super-soft-pizza",
+    "name": "Super Soft Pizza",
+    "description": "Capsicum, onion, paneer & cheese",
+    "category": "veg-delight",
+    "image": "/images/pizza-named/super-soft-pizza.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 169,
+      "medium": 329,
+      "large": 479
+    }
+  },
+  {
+    "id": "spicy-veggie",
+    "name": "Spicy Veggie",
+    "description": "Onion, capsicum, corn, spicy & cheese",
+    "category": "veg-delight",
+    "image": "/images/pizza-named/spicy-veggie.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 169,
+      "medium": 329,
+      "large": 479
+    }
+  },
+  {
+    "id": "country-special",
+    "name": "Country Special",
+    "description": "Onion, capsicum, tomato & cheese",
+    "category": "veg-delight",
+    "image": "/images/pizza-named/country-special.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 169,
+      "medium": 329,
+      "large": 479
+    }
+  },
+  {
+    "id": "double-cheese-margherita",
+    "name": "Double Cheese Margherita",
+    "description": "Double cheese, extra cheese",
+    "category": "veg-treat",
+    "image": "/images/pizza-named/double-cheese-margherita.webp",
+    "isBestSeller": true,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 149,
+      "medium": 299,
+      "large": 449
+    }
+  },
+  {
+    "id": "fresh-veggie",
+    "name": "Fresh Veggie",
+    "description": "Onion & capsicum",
+    "category": "veg-treat",
+    "image": "/images/pizza-named/fresh-veggie.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 149,
+      "medium": 299,
+      "large": 449
+    }
+  },
+  {
+    "id": "cheese-and-corn",
+    "name": "Cheese & Corn",
+    "description": "Corn & cheese",
+    "category": "veg-treat",
+    "image": "/images/pizza-named/cheese-and-corn.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 149,
+      "medium": 299,
+      "large": 449
+    }
+  },
+  {
+    "id": "cheese-and-paneer",
+    "name": "Cheese & Paneer",
+    "description": "Paneer & cheese",
+    "category": "veg-treat",
+    "image": "/images/pizza-named/cheese-and-paneer.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 149,
+      "medium": 299,
+      "large": 449
+    }
+  },
+  {
+    "id": "cheese-and-mushroom",
+    "name": "Cheese & Mushroom",
+    "description": "Mushroom & cheese",
+    "category": "veg-treat",
+    "image": "/images/pizza-named/cheese-mushroom.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 149,
+      "medium": 299,
+      "large": 449
+    }
+  },
+  {
+    "id": "cheese-red-pepper",
+    "name": "Cheese Red Pepper",
+    "description": "Cheese & red pepper",
+    "category": "veg-treat",
+    "image": "/images/pizza-named/cheese-and-redpepper.webp",
+    "isBestSeller": false,
+    "isNew": true,
+    "type": "pizza",
+    "prices": {
+      "regular": 149,
+      "medium": 299,
+      "large": 449
+    }
+  },
+  {
+    "id": "margherita-single-cheese",
+    "name": "Margherita",
+    "description": "Single cheese topping",
+    "category": "simply-veg",
+    "image": "/images/pizza-named/margherita.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 120,
+      "medium": 229,
+      "large": 369
+    }
+  },
+  {
+    "id": "margherita-cheese-tomato",
+    "name": "Margherita",
+    "description": "Cheese & tomato",
+    "category": "simply-veg",
+    "image": "/images/pizza-named/margherita-cheese-tomato.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "pizza",
+    "prices": {
+      "regular": 120,
+      "medium": 229,
+      "large": 369
+    }
+  },
+  {
+    "id": "aloo-tikki",
+    "name": "Aloo Tikki",
+    "description": "",
+    "category": "burger",
+    "image": "/images/burger/aloo-tikki.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 60
+  },
+  {
+    "id": "crispy-veggie",
+    "name": "Crispy Veggie",
+    "description": "",
+    "category": "burger",
+    "image": "/images/burger/crispy-veggie.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 65
+  },
+  {
+    "id": "spicy-veggie-burger",
+    "name": "Spicy Veggie",
+    "description": "",
+    "category": "burger",
+    "image": "/images/burger/spicy-veggie-burger.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 65
+  },
+  {
+    "id": "king-special",
+    "name": "King Special",
+    "description": "",
+    "category": "burger",
+    "image": "/images/burger/king-special.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 70
+  },
+  {
+    "id": "paneer-burger",
+    "name": "Paneer Burger",
+    "description": "",
+    "category": "burger",
+    "image": "/images/burger/paneer-burger.webp",
+    "isBestSeller": true,
+    "isNew": false,
+    "type": "simple",
+    "price": 80
+  },
+  {
+    "id": "tandoori-burger",
+    "name": "Tandoori Burger",
+    "description": "",
+    "category": "burger",
+    "image": "/images/burger/tandoori-burger.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 80
+  },
+  {
+    "id": "spicy-burger",
+    "name": "Spicy Burger",
+    "description": "",
+    "category": "burger",
+    "image": "/images/burger/spicy-burger.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 85
+  },
+  {
+    "id": "pizza-burger",
+    "name": "Pizza Burger",
+    "description": "",
+    "category": "burger",
+    "image": "/images/burger/pizza-burger.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 85
+  },
+  {
+    "id": "cheese-burger",
+    "name": "Cheese Burger",
+    "description": "",
+    "category": "burger",
+    "image": "/images/burger/cheese-burger.webp",
+    "isBestSeller": true,
+    "isNew": false,
+    "type": "simple",
+    "price": 99
+  },
+  {
+    "id": "maharaja-burger",
+    "name": "Maharaja Burger",
+    "description": "",
+    "category": "burger",
+    "image": "/images/burger/maharaja-burger.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 99
+  },
+  {
+    "id": "french-fries",
+    "name": "French Fries",
+    "description": "",
+    "category": "fries",
+    "image": "/images/fries/masala-fries.webp",
+    "isBestSeller": true,
+    "isNew": false,
+    "type": "simple",
+    "price": 80
+  },
+  {
+    "id": "kungfu-fries",
+    "name": "Kungfu Fries",
+    "description": "",
+    "category": "fries",
+    "image": "/images/fries/kungfu-fries.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 90
+  },
+  {
+    "id": "crispers-fries",
+    "name": "Crispers Fries",
+    "description": "",
+    "category": "fries",
+    "image": "/images/fries/crispers-fries.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 100
+  },
+  {
+    "id": "masala-fries",
+    "name": "Masala Fries",
+    "description": "",
+    "category": "fries",
+    "image": "/images/fries/masala-fries.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 80
+  },
+  {
+    "id": "lemon-peri-peri-fries",
+    "name": "Lemon Peri Peri Fries",
+    "description": "",
+    "category": "fries",
+    "image": "/images/fries/lemon-peri-peri-fries.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 90
+  },
+  {
+    "id": "cheese-fries",
+    "name": "Cheese Fries",
+    "description": "",
+    "category": "fries",
+    "image": "/images/fries/cheese-fries.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 120
+  },
+  {
+    "id": "white-sauce-pasta",
+    "name": "White Sauce Pasta",
+    "description": "",
+    "category": "pasta",
+    "image": "/images/pasta/white-sauce-pasta.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 120
+  },
+  {
+    "id": "red-sauce-pasta",
+    "name": "Red Sauce Pasta",
+    "description": "",
+    "category": "pasta",
+    "image": "/images/pasta/red-sauce-pasta.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 130
+  },
+  {
+    "id": "tandoori-sauce-pasta",
+    "name": "Tandoori Sauce Pasta",
+    "description": "",
+    "category": "pasta",
+    "image": "/images/pasta/tandoori-sauce-pasta.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 130
+  },
+  {
+    "id": "indian-veg-wrap",
+    "name": "Indian Veg. Wrap",
+    "description": "",
+    "category": "wrap",
+    "image": "/images/wrap/indian-veg-wrap.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 80
+  },
+  {
+    "id": "indian-paneer-wrap",
+    "name": "Indian Paneer Wrap",
+    "description": "",
+    "category": "wrap",
+    "image": "/images/wrap/indian-paneer-wrap.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 99
+  },
+  {
+    "id": "mexican-aloo-tikki-wrap",
+    "name": "Mexican Aloo Tikki Wrap",
+    "description": "",
+    "category": "wrap",
+    "image": "/images/wrap/mexican-aloo-tikki-wrap.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 99
+  },
+  {
+    "id": "stuffed-garlic-bread",
+    "name": "Stuffed Garlic Bread",
+    "description": "",
+    "category": "bread",
+    "image": "/images/bread/stuff-garlic.webp",
+    "isBestSeller": true,
+    "isNew": false,
+    "type": "simple",
+    "price": 130
+  },
+  {
+    "id": "garlic-bread",
+    "name": "Garlic Bread",
+    "description": "",
+    "category": "bread",
+    "image": "/images/bread/garlic-bread.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 80
+  },
+  {
+    "id": "garlic-bread-cheese",
+    "name": "Garlic Bread Cheese",
+    "description": "",
+    "category": "bread",
+    "image": "/images/bread/chesseg.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 110
+  },
+  {
+    "id": "tandoori-garlic",
+    "name": "Tandoori Garlic",
+    "description": "",
+    "category": "bread",
+    "image": "/images/bread/tandoori.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 140
+  },
+  {
+    "id": "cheese-dip",
+    "name": "Cheese Dip",
+    "description": "",
+    "category": "bread",
+    "image": "/images/dips/cheese.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 30
+  },
+  {
+    "id": "jalapeno-dip",
+    "name": "Jalapeno Dip",
+    "description": "",
+    "category": "bread",
+    "image": "/images/dips/jalapeno.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 30
+  },
+  {
+    "id": "calzone",
+    "name": "Calzone",
+    "description": "",
+    "category": "sides-other",
+    "image": "/images/pocket parcel/calzone.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 110
+  },
+  {
+    "id": "pocket-parcel",
+    "name": "Pocket Parcel",
+    "description": "",
+    "category": "sides-other",
+    "image": "/images/pocket parcel/pocket-parcel.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 50
+  },
+  {
+    "id": "cheesy-spicy-twists",
+    "name": "Cheesy Spicy Twists",
+    "description": "",
+    "category": "sides-other",
+    "image": "/images/bread/cheesy-spicy-twists.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 90
+  },
+  {
+    "id": "cheesy-paneer-spicy-twists",
+    "name": "Cheesy Paneer Spicy Twists",
+    "description": "",
+    "category": "sides-other",
+    "image": "/images/bread/cheesy-paneer-spicy-twists.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 110
+  },
+  {
+    "id": "vanilla-shake",
+    "name": "Vanilla Shake",
+    "description": "",
+    "category": "shake",
+    "image": "/images/shake/vanilla-shake.webp",
+    "isBestSeller": false,
+    "isNew": false,
+    "type": "simple",
+    "price": 80
+  },
+  {
+    "id": "chocolate-shake",
+    "name": "Chocolate Shake",
+    "description": "",
+    "category": "shake",
+    "image": "/images/shake/chocolate-shake.webp",
+    "isBestSeller": true,
+    "isNew": false,
+    "type": "simple",
+    "price": 80
+  }
+]

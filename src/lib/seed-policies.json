@@ -1,0 +1,140 @@
+{
+  "privacy": {
+    "title": "Privacy Policy",
+    "description": "Your privacy is important to Da Pizza Hub. This Privacy Policy explains how we collect, use and protect your personal information when you visit our website or place an order.",
+    "sections": [
+      {
+        "heading": "Information We Collect",
+        "content": [
+          "We may collect your name, phone number, email address, delivery address and order details when you use our website.",
+          "Payment information is securely processed through trusted payment providers and is never stored on our servers."
+        ]
+      },
+      {
+        "heading": "How We Use Your Information",
+        "content": [
+          "To process and deliver your orders.",
+          "To improve our products, services and customer experience.",
+          "To send important updates related to your orders."
+        ]
+      },
+      {
+        "heading": "Cookies",
+        "content": [
+          "Our website may use cookies to improve browsing experience and remember your preferences."
+        ]
+      },
+      {
+        "heading": "Data Security",
+        "content": [
+          "We use reasonable security measures to protect your personal information against unauthorized access or misuse."
+        ]
+      },
+      {
+        "heading": "Contact Us",
+        "content": [
+          "If you have any questions regarding this Privacy Policy, please contact Da Pizza Hub using the information provided on our Contact page."
+        ]
+      }
+    ]
+  },
+  "refund": {
+    "title": "Refund Policy",
+    "description": "At Da Pizza Hub, customer satisfaction is our priority. This Refund Policy explains the situations where refunds or replacements may be provided.",
+    "sections": [
+      {
+        "heading": "Order Cancellation",
+        "content": [
+          "Orders can only be cancelled before preparation begins.",
+          "Once the kitchen starts preparing your order, cancellations may not be possible."
+        ]
+      },
+      {
+        "heading": "Refund Eligibility",
+        "content": [
+          "Refunds may be issued if your order was not delivered.",
+          "Refunds may be approved for incorrect or damaged orders after verification.",
+          "Refund requests are reviewed individually by our support team."
+        ]
+      },
+      {
+        "heading": "Replacement Policy",
+        "content": [
+          "If you receive an incorrect or damaged item, we may provide a replacement instead of a refund."
+        ]
+      },
+      {
+        "heading": "Refund Processing",
+        "content": [
+          "Approved refunds are processed to the original payment method.",
+          "Processing time may vary depending on your bank or payment provider."
+        ]
+      },
+      {
+        "heading": "Need Help?",
+        "content": [
+          "For refund-related questions, please contact our support team through the Contact page or call the nearest Da Pizza Hub branch."
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "title": "Terms \\u0026 Conditions",
+    "description": "Welcome to Da Pizza Hub. By accessing our website or placing an order, you agree to the following terms and conditions.",
+    "sections": [
+      {
+        "heading": "Use of Website",
+        "content": [
+          "You agree to use this website only for lawful purposes.",
+          "Any misuse of the website may result in restriction of access."
+        ]
+      },
+      {
+        "heading": "Orders",
+        "content": [
+          "All orders are subject to confirmation and product availability.",
+          "Da Pizza Hub reserves the right to refuse or cancel any order when necessary."
+        ]
+      },
+      {
+        "heading": "Pricing",
+        "content": [
+          "Prices displayed on the website are subject to change without prior notice.",
+          "Applicable taxes and delivery charges may be added during checkout."
+        ]
+      },
+      {
+        "heading": "Delivery",
+        "content": [
+          "Estimated delivery times are approximate and may vary depending on weather, traffic or operational conditions.",
+          "Delays caused by circumstances beyond our control do not automatically qualify for compensation."
+        ]
+      },
+      {
+        "heading": "Intellectual Property",
+        "content": [
+          "All website content including logos, images, graphics and text belongs to Da Pizza Hub unless otherwise stated.",
+          "Unauthorized copying or reproduction is prohibited."
+        ]
+      },
+      {
+        "heading": "Limitation of Liability",
+        "content": [
+          "Da Pizza Hub shall not be liable for indirect or consequential damages arising from the use of this website or our services."
+        ]
+      },
+      {
+        "heading": "Changes to Terms",
+        "content": [
+          "We reserve the right to update these Terms & Conditions at any time without prior notice."
+        ]
+      },
+      {
+        "heading": "Contact",
+        "content": [
+          "If you have any questions regarding these Terms & Conditions, please contact us through our Contact page."
+        ]
+      }
+    ]
+  }
+}
