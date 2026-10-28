@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { isSuperAdminAuthenticated } from "@/lib/admin-auth";
 import {
   deleteCoupon,
   getCoupons,
@@ -25,10 +25,10 @@ function toAdminCouponRow(c: Coupon) {
 }
 
 export async function GET(req: Request) {
-  if (!isAdminAuthenticated(req)) {
+  if (!isSuperAdminAuthenticated(req)) {
     return NextResponse.json(
-      { success: false, message: "Unauthorized" },
-      { status: 401 }
+      { success: false, message: "Super Admin privileges required to manage promo coupons." },
+      { status: 403 }
     );
   }
 
@@ -37,10 +37,10 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  if (!isAdminAuthenticated(req)) {
+  if (!isSuperAdminAuthenticated(req)) {
     return NextResponse.json(
-      { success: false, message: "Unauthorized" },
-      { status: 401 }
+      { success: false, message: "Super Admin privileges required to create promo coupons." },
+      { status: 403 }
     );
   }
 
@@ -87,10 +87,10 @@ export async function POST(req: Request) {
 }
 
 export async function PATCH(req: Request) {
-  if (!isAdminAuthenticated(req)) {
+  if (!isSuperAdminAuthenticated(req)) {
     return NextResponse.json(
-      { success: false, message: "Unauthorized" },
-      { status: 401 }
+      { success: false, message: "Super Admin privileges required to edit coupons." },
+      { status: 403 }
     );
   }
 
@@ -98,8 +98,23 @@ export async function PATCH(req: Request) {
     const body = await req.json();
     const code = String(body.code ?? "");
     const updated = await patchCoupon(code, {
-      isActive: body.isActive,
+      type: body.type,
+      value: body.value !== undefined ? Number(body.value) : undefined,
+      minOrder: body.minOrder !== undefined ? Number(body.minOrder) : undefined,
+      maxDiscount:
+        body.maxDiscount !== undefined
+          ? body.maxDiscount
+            ? Number(body.maxDiscount)
+            : undefined
+          : undefined,
       description: body.description,
+      usageLimit:
+        body.usageLimit !== undefined
+          ? body.usageLimit
+            ? Number(body.usageLimit)
+            : undefined
+          : undefined,
+      isActive: body.isActive,
     });
 
     if (!updated) {
@@ -122,10 +137,10 @@ export async function PATCH(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  if (!isAdminAuthenticated(req)) {
+  if (!isSuperAdminAuthenticated(req)) {
     return NextResponse.json(
-      { success: false, message: "Unauthorized" },
-      { status: 401 }
+      { success: false, message: "Super Admin privileges required to delete coupons." },
+      { status: 403 }
     );
   }
 

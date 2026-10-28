@@ -93,6 +93,7 @@ export async function POST(req: Request) {
     const customerPhone = String(body.customerPhone ?? "")
       .replace(/\D/g, "")
       .slice(-10);
+    const customerEmail = body.customerEmail ? String(body.customerEmail).trim() : null;
     const deliveryAddress = String(body.deliveryAddress ?? "").trim();
     const orderType = body.orderType === "pickup" ? "pickup" : "delivery";
     const paymentMethod = body.paymentMethod === "upi" ? "upi" : "cod";
@@ -243,7 +244,25 @@ export async function POST(req: Request) {
     }
 
     const total = Math.max(0, computedSubtotal - computedDiscount) + deliveryFee;
-    const orderNumber = `DPH-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    // Sequential daily order number: DPH-YYYYMMDD-001
+    const allOrders = await getOrders();
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const dd = String(now.getDate()).padStart(2, "0");
+    const datePrefix = `DPH-${yyyy}${mm}${dd}-`;
+
+    let maxSeq = 0;
+    for (const o of allOrders) {
+      if (o.orderNumber && o.orderNumber.startsWith(datePrefix)) {
+        const seqPart = parseInt(o.orderNumber.replace(datePrefix, ""), 10);
+        if (!isNaN(seqPart) && seqPart > maxSeq) {
+          maxSeq = seqPart;
+        }
+      }
+    }
+    const orderNumber = `${datePrefix}${String(maxSeq + 1).padStart(3, "0")}`;
 
     const orderRecord: Order = {
       id: crypto.randomUUID(),
@@ -252,6 +271,7 @@ export async function POST(req: Request) {
       orderType,
       customerName,
       customerPhone,
+      customerEmail,
       deliveryAddress,
       customerLat,
       customerLng,

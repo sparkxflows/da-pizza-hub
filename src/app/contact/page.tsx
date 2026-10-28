@@ -2,10 +2,7 @@ import type { Metadata } from "next";
 import { getBranches } from "@/lib/db";
 import { ContactHero } from "@/components/contact/ContactHero";
 import { ContactCards } from "@/components/contact/ContactCards";
-import { ContactForm } from "@/components/contact/ContactForm";
 import { ContactMap } from "@/components/contact/ContactMap";
-import { ContactFAQ } from "@/components/contact/ContactFAQ";
-import { ContactCTA } from "@/components/contact/ContactCTA";
 
 export const metadata: Metadata = {
   title: "Contact Us — Da Pizza Hub Hansi",
@@ -23,13 +20,10 @@ export default async function ContactPage() {
   if (!primaryBranch) return null;
 
   return (
-    <>
+    <main className="min-h-screen bg-[#090909]">
       <ContactHero primaryBranch={primaryBranch} />
       <ContactCards branches={branches} />
-      <ContactForm primaryBranch={primaryBranch} />
       <ContactMap primaryBranch={primaryBranch} />
-      <ContactFAQ />
-      <ContactCTA primaryBranch={primaryBranch} />
-    </>
+    </main>
   );
 }

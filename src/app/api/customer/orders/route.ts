@@ -13,6 +13,6 @@ export async function GET() {
     );
   }
 
-  const orders = await getCustomerOrders(customer.phone, customer.name);
+  const orders = await getCustomerOrders(customer.phone, customer.name, customer.email);
   return NextResponse.json({ success: true, orders });
 }

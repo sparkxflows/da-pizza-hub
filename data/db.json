@@ -797,6 +797,84 @@
   ],
   "orders": [
     {
+      "id": "cb2575f8-5316-47e6-acdd-f61fe8d0d4aa",
+      "orderNumber": "DPH-20261028-002",
+      "branchId": "Hansi",
+      "orderType": "delivery",
+      "customerName": "Priya Sharma",
+      "customerPhone": "9812345678",
+      "customerEmail": "priya@example.com",
+      "deliveryAddress": "Gandhi Market, Hansi",
+      "customerLat": null,
+      "customerLng": null,
+      "distanceKm": null,
+      "items": [
+        {
+          "itemId": "farm-house-pizza",
+          "name": "Farm House Pizza",
+          "quantity": 2,
+          "basePrice": 199,
+          "unitPrice": 199,
+          "customization": {
+            "size": "regular",
+            "extraCheese": false,
+            "cheeseBurst": false,
+            "panBase": false,
+            "extraToppings": []
+          }
+        }
+      ],
+      "subtotal": 398,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 0,
+      "total": 398,
+      "paymentMethod": "upi",
+      "scheduleMode": "now",
+      "scheduledFor": null,
+      "status": "new",
+      "createdAt": "2026-10-28T12:50:07.097Z"
+    },
+    {
+      "id": "ce5e9ac1-8df5-4950-ab9e-0c06b5ed15f5",
+      "orderNumber": "DPH-20261028-001",
+      "branchId": "Hansi",
+      "orderType": "delivery",
+      "customerName": "Rohan Verma",
+      "customerPhone": "9876543210",
+      "customerEmail": "rohan@example.com",
+      "deliveryAddress": "Model Town, Hansi, Haryana",
+      "customerLat": null,
+      "customerLng": null,
+      "distanceKm": null,
+      "items": [
+        {
+          "itemId": "da-paneer-special",
+          "name": "Da Paneer Special",
+          "quantity": 2,
+          "basePrice": 250,
+          "unitPrice": 250,
+          "customization": {
+            "size": "regular",
+            "extraCheese": false,
+            "cheeseBurst": false,
+            "panBase": false,
+            "extraToppings": []
+          }
+        }
+      ],
+      "subtotal": 500,
+      "discount": 0,
+      "couponCode": null,
+      "deliveryFee": 0,
+      "total": 500,
+      "paymentMethod": "cod",
+      "scheduleMode": "now",
+      "scheduledFor": null,
+      "status": "new",
+      "createdAt": "2026-10-28T12:49:56.567Z"
+    },
+    {
       "id": "ec8ddd54-89ab-4077-b5f7-558c7b7012e1",
       "orderNumber": "DPH-4143",
       "branchId": "Hansi",
@@ -831,7 +909,7 @@
       "paymentMethod": "cod",
       "scheduleMode": "now",
       "scheduledFor": null,
-      "status": "new",
+      "status": "completed",
       "createdAt": "2026-10-28T07:24:48.504Z"
     },
     {
@@ -1216,6 +1294,14 @@
     }
   ],
   "customers": [
+    {
+      "id": "cust_1793192056369_kjins",
+      "phone": "9876543210",
+      "name": "Rohan Verma",
+      "email": "rohan@example.com",
+      "authProvider": "supabase",
+      "createdAt": "2026-10-28T12:54:16.369Z"
+    },
     {
       "id": "cust_1793165313110_13sd5",
       "phone": "9954106760",

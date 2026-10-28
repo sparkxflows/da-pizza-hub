@@ -12,7 +12,7 @@ import { useCustomerStore } from "@/lib/customer-store";
 const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Menu", href: "/menu" },
-  { label: "Offers", href: "/#offers" },
+  { label: "Offers", href: "/offers" },
   { label: "Track Order", href: "/track" },
   { label: "Contact", href: "/contact" },
 ];
@@ -26,7 +26,6 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [hash, setHash] = useState("");
   const [userDropdown, setUserDropdown] = useState(false);
 
   const { customer, openAuthModal, logout, fetchProfile } = useCustomerStore();
@@ -37,65 +36,30 @@ export function Navbar() {
 
   useEffect(() => {
     setMounted(true);
-    setHash(window.location.hash);
 
     const onScroll = () => {
       setScrolled(window.scrollY > 25);
-      if (window.location.pathname === "/") {
-        const offersEl = document.getElementById("offers");
-        if (offersEl) {
-          const rect = offersEl.getBoundingClientRect();
-          if (rect.top <= 160 && rect.bottom >= 160) {
-            setHash("#offers");
-            return;
-          }
-        }
-        if (window.scrollY < 300 && window.location.hash !== "#offers") {
-          setHash("");
-        }
-      }
     };
-
-    const onHashChange = () => setHash(window.location.hash);
 
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("hashchange", onHashChange);
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("hashchange", onHashChange);
     };
   }, []);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setHash(window.location.hash);
-    }
-  }, [pathname]);
 
   const badgeCount = mounted ? itemCount : 0;
 
   const isLinkActive = (href: string) => {
-    if (href === "/#offers") {
-      return pathname === "/" && hash === "#offers";
-    }
     if (href === "/") {
-      return pathname === "/" && hash !== "#offers";
+      return pathname === "/";
     }
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
   const handleNavClick = (href: string) => {
-    if (href === "/#offers") {
-      setHash("#offers");
-    } else if (href === "/") {
-      setHash("");
-      if (pathname === "/" && typeof window !== "undefined") {
-        window.history.replaceState(null, "", "/");
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-    } else {
-      setHash("");
+    if (href === "/" && typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -152,7 +116,6 @@ export function Navbar() {
                     {link.label}
                   </span>
 
-                  {/* Left-to-right sliding underline: subtle on hover, full solid when active/clicked */}
                   <span
                     aria-hidden="true"
                     className={`pointer-events-none absolute left-0 right-0 -bottom-0.5 rounded-full origin-left transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
@@ -166,8 +129,27 @@ export function Navbar() {
             })}
           </nav>
 
+          {/* Right side controls: Cart on left of Sign In, Sign In on the extreme right */}
           <div className="flex items-center gap-2.5 sm:gap-3">
-            {/* Customer Auth / Profile Button */}
+            {/* 1. Cart Button */}
+            <button
+              onClick={openCart}
+              aria-label="Open Cart"
+              className="relative flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 transition-all duration-300 hover:border-[#D91F26] hover:bg-[#D91F26]"
+            >
+              <ShoppingBag size={20} className="text-white" />
+              {badgeCount > 0 && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-[#FFC107] text-xs font-bold text-black"
+                >
+                  {badgeCount}
+                </motion.span>
+              )}
+            </button>
+
+            {/* 2. Customer Auth / Profile Button (Extreme Right) */}
             {mounted && (
               <div className="relative">
                 {customer ? (
@@ -251,31 +233,7 @@ export function Navbar() {
               </div>
             )}
 
-            <Link
-              href="/menu"
-              className="hidden lg:flex h-12 items-center gap-2 rounded-full bg-gradient-to-r from-[#D91F26] to-[#FF6B00] px-6 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-[0_15px_35px_rgba(217,31,38,.45)]"
-            >
-              <ShoppingBag size={18} />
-              Order Online
-            </Link>
-
-            <button
-              onClick={openCart}
-              aria-label="Open Cart"
-              className="relative flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 transition-all duration-300 hover:border-[#D91F26] hover:bg-[#D91F26]"
-            >
-              <ShoppingBag size={20} className="text-white" />
-              {badgeCount > 0 && (
-                <motion.span
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-[#FFC107] text-xs font-bold text-black"
-                >
-                  {badgeCount}
-                </motion.span>
-              )}
-            </button>
-
+            {/* Mobile Menu Toggle Button */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle Menu"
@@ -388,18 +346,10 @@ export function Navbar() {
                     className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 py-3 text-xs font-semibold text-white transition hover:bg-white/10"
                   >
                     <User size={16} className="text-[#F6C453]" />
-                    Sign In (OTP / Supabase)
+                    Sign In / Account
                   </button>
                 )}
               </div>
-
-              <Link
-                href="/menu"
-                onClick={() => setMobileOpen(false)}
-                className="mt-4 flex h-14 w-full items-center justify-center rounded-2xl bg-gradient-to-r from-[#D91F26] to-[#FF6B00] text-base font-bold text-white transition-all hover:scale-[1.02]"
-              >
-                Order Online
-              </Link>
             </motion.div>
           </motion.div>
         )}

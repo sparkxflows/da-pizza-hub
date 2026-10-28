@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -9,24 +9,25 @@ import {
   ClipboardList,
   UtensilsCrossed,
   Tag,
-  Building2,
-  Users,
-  Sunrise,
+  BarChart3,
   TrendingUp,
   LogOut,
   Menu,
   X,
   ExternalLink,
+  ShieldCheck,
+  Store,
+  Users,
 } from "lucide-react";
-import { clearAdminToken } from "@/lib/admin-client";
+import { clearAdminToken, getClientAdminRole, type ClientAdminRole } from "@/lib/admin-client";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/orders", label: "Orders", icon: ClipboardList },
   { href: "/admin/menu", label: "Menu", icon: UtensilsCrossed },
   { href: "/admin/coupons", label: "Coupons", icon: Tag },
-  { href: "/admin/followup", label: "Follow Up", icon: Users },
-  { href: "/admin/morning-report", label: "Morning Report", icon: Sunrise },
+  { href: "/admin/users", label: "All Users", icon: Users },
+  { href: "/admin/morning-report", label: "Daily Reports", icon: BarChart3 },
   { href: "/admin/sales", label: "Sales", icon: TrendingUp },
 ];
 
@@ -43,6 +44,40 @@ export function AdminNav() {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [role, setRole] = useState<ClientAdminRole | null>(null);
+
+  useEffect(() => {
+    const currentRole = getClientAdminRole();
+    setRole(currentRole);
+
+    // Coupons and Users are exclusive to Super Admin
+    if (
+      currentRole === "admin" &&
+      pathname &&
+      (pathname.startsWith("/admin/coupons") ||
+        pathname.startsWith("/admin/users"))
+    ) {
+      router.replace("/admin");
+    }
+  }, [pathname, router]);
+
+  const visibleNavItems = useMemo(() => {
+    if (role === "admin") {
+      // Store Admin has everything EXCEPT Coupons and All Users
+      return NAV_ITEMS.filter(
+        (item) => !["/admin/coupons", "/admin/users"].includes(item.href)
+      );
+    }
+    // Super Admin has all sections including Coupons and All Users
+    return NAV_ITEMS;
+  }, [role]);
+
+  const isSuper = role === "super_admin";
+  const portalLabel = isSuper ? "SUPER ADMIN PORTAL" : "STORE ADMIN PORTAL";
+  const portalBadge = isSuper
+    ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.2)]"
+    : "text-[#F6C453] bg-[#F6C453]/10 border-[#F6C453]/30";
+  const homeLink = "/admin";
 
   async function handleLogout() {
     if (loggingOut) return;
@@ -60,7 +95,7 @@ export function AdminNav() {
     <>
       <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-white/10 bg-[#0d0d0d]/95 px-4 backdrop-blur-xl lg:hidden">
         <Link
-          href="/admin"
+          href={homeLink}
           className="flex items-center gap-3"
           onClick={() => setMobileOpen(false)}
         >
@@ -75,8 +110,11 @@ export function AdminNav() {
             <p className="text-sm font-bold leading-none text-white">
               DA PIZZA HUB
             </p>
-            <p className="mt-1 text-[9px] font-semibold tracking-[0.2em] text-gold">
-              STAFF PANEL
+            <p
+              className={`mt-1 inline-flex items-center gap-1 text-[8.5px] font-bold tracking-[0.15em] uppercase px-1.5 py-0.5 rounded border ${portalBadge}`}
+            >
+              {isSuper ? <ShieldCheck size={10} /> : <Store size={10} />}
+              {portalLabel}
             </p>
           </div>
         </Link>
@@ -93,13 +131,14 @@ export function AdminNav() {
       {mobileOpen && (
         <div className="fixed inset-x-0 top-16 z-40 border-b border-white/10 bg-[#111111] p-3 shadow-2xl lg:hidden">
           <nav className="space-y-1">
-            {NAV_ITEMS.map((item) => {
+            {visibleNavItems.map((item) => {
               const Icon = item.icon;
               const active = isNavActive(pathname, item);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
+                  prefetch={true}
                   onClick={() => setMobileOpen(false)}
                   className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${
                     active
@@ -136,34 +175,40 @@ export function AdminNav() {
 
       <aside className="sticky top-0 hidden h-screen w-[260px] shrink-0 flex-col border-r border-white/10 bg-[#101010] lg:flex">
         <div className="border-b border-white/10 px-5 py-5">
-          <Link href="/admin" className="flex items-center gap-3">
+          <Link href={homeLink} className="flex items-center gap-3">
             <Image
               src="/brand/logo.png"
               alt="Da Pizza Hub"
-              width={48}
-              height={48}
+              width={44}
+              height={44}
               className="rounded-full"
               priority
             />
             <div className="min-w-0">
-              <p className="truncate text-base font-bold leading-none text-white">
+              <p className="truncate text-sm font-bold leading-none text-white">
                 Da Pizza Hub
               </p>
-              <p className="mt-1.5 text-[10px] font-semibold tracking-[0.2em] text-gold">
-                STAFF PORTAL
-              </p>
+              <div className="mt-1.5">
+                <span
+                  className={`inline-flex items-center gap-1 text-[8.5px] font-bold tracking-[0.12em] uppercase px-1.5 py-0.5 rounded border ${portalBadge}`}
+                >
+                  {isSuper ? <ShieldCheck size={10} /> : <Store size={10} />}
+                  {portalLabel}
+                </span>
+              </div>
             </div>
           </Link>
         </div>
 
         <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-          {NAV_ITEMS.map((item) => {
+          {visibleNavItems.map((item) => {
             const Icon = item.icon;
             const active = isNavActive(pathname, item);
             return (
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={true}
                 className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${
                   active
                     ? "bg-accent/15 text-accent"

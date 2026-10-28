@@ -207,11 +207,8 @@ export default function AdminOrdersPage() {
       <div className="sticky top-0 z-20 border-b border-white/10 bg-bg/95 px-4 py-4 backdrop-blur-xl sm:px-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-lg font-semibold text-white sm:text-xl flex items-center gap-2">
+            <h1 className="text-lg font-semibold text-white sm:text-xl">
               Kitchen &amp; Order Dashboard
-              <span className="rounded-full bg-red-600/20 border border-red-500/30 px-2.5 py-0.5 text-xs font-bold text-red-400">
-                Hansi Store
-              </span>
             </h1>
             <p className="text-xs text-ink-secondary mt-0.5">
               {filtered.length} order{filtered.length === 1 ? "" : "s"} shown · auto-refreshes every 12s

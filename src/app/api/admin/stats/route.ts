@@ -26,6 +26,13 @@ export async function GET(req: Request) {
   let weekRevenue = 0;
   let monthOrders = 0;
   let monthRevenue = 0;
+  let lifetimeOrders = 0;
+  let lifetimeRevenue = 0;
+
+  let codOrders = 0;
+  let codRevenue = 0;
+  let upiOrders = 0;
+  let upiRevenue = 0;
 
   const statusCounts = {
     new: 0,
@@ -48,6 +55,17 @@ export async function GET(req: Request) {
     else if (ord.status === "cancelled") statusCounts.cancelled++;
 
     if (!isCancelled) {
+      lifetimeOrders++;
+      lifetimeRevenue += ord.total;
+
+      if (ord.paymentMethod === "cod") {
+        codOrders++;
+        codRevenue += ord.total;
+      } else {
+        upiOrders++;
+        upiRevenue += ord.total;
+      }
+
       if (t >= startOfToday.getTime()) {
         todayOrders++;
         todayRevenue += ord.total;
@@ -74,12 +92,31 @@ export async function GET(req: Request) {
     .sort((a, b) => b.quantity - a.quantity)
     .slice(0, 10);
 
+  // Return the full recent order history sorted descending
+  const recentHistory = orders.slice(0, 50).map((o) => ({
+    id: o.id,
+    orderNumber: o.orderNumber,
+    customerName: o.customerName,
+    customerPhone: o.customerPhone,
+    total: o.total,
+    paymentMethod: o.paymentMethod,
+    status: o.status,
+    itemsCount: o.items.reduce((acc, i) => acc + i.quantity, 0),
+    createdAt: o.createdAt,
+  }));
+
   return NextResponse.json({
     success: true,
     today: { orders: todayOrders, revenue: todayRevenue },
     week: { orders: weekOrders, revenue: weekRevenue },
     month: { orders: monthOrders, revenue: monthRevenue },
+    lifetime: { orders: lifetimeOrders, revenue: lifetimeRevenue },
+    payments: {
+      cod: { orders: codOrders, revenue: codRevenue },
+      upi: { orders: upiOrders, revenue: upiRevenue },
+    },
     status: statusCounts,
     topItems,
+    recentHistory,
   });
 }

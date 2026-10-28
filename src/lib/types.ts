@@ -159,6 +159,7 @@ export interface OrderRecord {
   orderType: "delivery" | "pickup";
   customerName: string;
   customerPhone: string;
+  customerEmail?: string | null;
   deliveryAddress: string;
   customerLat: number | null;
   customerLng: number | null;
@@ -173,6 +174,9 @@ export interface OrderRecord {
   scheduleMode: ScheduleMode;
   scheduledFor: string | null;
   status: OrderStatus;
+  assignedRiderName?: string | null;
+  assignedRiderPhone?: string | null;
+  deliveredAt?: string | null;
   createdAt: string;
 }
 
@@ -183,7 +187,8 @@ export interface Customer {
   phone?: string;
   name: string;
   email?: string | null;
-  authProvider: "phone" | "supabase";
+  authProvider: "phone" | "supabase" | "google" | string;
+  avatarUrl?: string | null;
   createdAt: string;
 }
 

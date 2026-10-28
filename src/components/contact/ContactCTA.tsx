@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Sparkles, ShoppingBag, ArrowRight, Phone } from "lucide-react";
+import { ShoppingBag, ArrowRight, Phone } from "lucide-react";
 import type { Branch } from "@/lib/types";
 
 export function ContactCTA({ primaryBranch }: { primaryBranch: Branch }) {
@@ -31,8 +31,7 @@ export function ContactCTA({ primaryBranch }: { primaryBranch: Branch }) {
           transition={{ duration: 0.8 }}
           className="mx-auto max-w-5xl text-center"
         >
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#F6C453]/20 bg-[#F6C453]/10 px-6 py-3">
-            <Sparkles size={16} className="text-[#F6C453]" />
+          <div className="inline-flex items-center rounded-full border border-[#F6C453]/20 bg-[#F6C453]/10 px-6 py-3">
             <span className="text-xs font-semibold uppercase tracking-[0.35em] text-[#F6C453]">
               READY TO ORDER?
             </span>

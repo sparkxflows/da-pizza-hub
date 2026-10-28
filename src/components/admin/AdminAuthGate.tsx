@@ -12,7 +12,13 @@ export function AdminAuthGate({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const [allowed, setAllowed] = useState(serverAuthed);
+  const [allowed, setAllowed] = useState(() => {
+    if (serverAuthed) return true;
+    if (typeof window !== "undefined") {
+      return Boolean(getAdminToken());
+    }
+    return false;
+  });
 
   useEffect(() => {
     if (serverAuthed) {
@@ -24,10 +30,14 @@ export function AdminAuthGate({
       router.replace("/admin/login");
       return;
     }
+    // Verify in background without blocking navigation
     adminFetch("/api/admin/stats")
       .then((res) => {
-        if (res.ok) setAllowed(true);
-        else router.replace("/admin/login");
+        if (res.ok) {
+          setAllowed(true);
+        } else {
+          router.replace("/admin/login");
+        }
       })
       .catch(() => {
         router.replace("/admin/login");
@@ -37,7 +47,10 @@ export function AdminAuthGate({
   if (!allowed) {
     return (
       <div className="min-h-screen bg-bg flex items-center justify-center text-sm text-ink-secondary">
-        Checking staff session...
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 border-2 border-[#D91F26] border-t-transparent rounded-full animate-spin" />
+          <span>Loading admin panel...</span>
+        </div>
       </div>
     );
   }

@@ -3,27 +3,27 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Clock } from "lucide-react";
 
 const OFFERS = [
   {
     title: "30% OFF",
     subtitle: "On Your First Order",
     description:
-      "Get flat 30% OFF on your first online order with premium handcrafted pizzas.",
+      "Get flat 30% OFF on your first online order with premium handcrafted pizzas in Hansi.",
     image: "/images/offers/offer-1.webp",
-    badge: "LIMITED TIME",
-    button: "Claim Offer",
+    badge: "LIMITED TIME OFFER",
+    button: "View Offers",
     gradient: "from-red-700/90 via-red-900/70 to-black/90",
   },
   {
     title: "FREE DELIVERY",
     subtitle: "Within 3 KM in Hansi",
     description:
-      "Hot, fresh and fast delivery right to your doorstep — 100% free within 3 km from our Gandhi Market store.",
+      "Hot, fresh and fast delivery right to your doorstep — 100% free within 3 km from our store.",
     image: "/images/offers/offer-2.webp",
-    badge: "🔥 HOTTEST DEAL IN HANSI",
-    button: "Order Free Delivery Now",
+    badge: "LIMITED TIME DEAL",
+    button: "View Offers",
     gradient: "from-emerald-700/95 via-green-950/80 to-black/95",
   },
   {
@@ -32,8 +32,8 @@ const OFFERS = [
     description:
       "2 Pizzas + Garlic Bread + Cold Drink. Perfect for weekend family nights.",
     image: "/images/offers/offer-3.webp",
-    badge: "BEST VALUE",
-    button: "View Combo",
+    badge: "LIMITED TIME SPECIAL",
+    button: "View Offers",
     gradient: "from-orange-700/90 via-red-800/70 to-black/90",
   },
 ];
@@ -58,10 +58,10 @@ export function Offers() {
             </h2>
           </div>
           <Link
-            href="/menu"
+            href="/offers"
             className="group flex items-center gap-2 font-semibold text-[#F6C453] hover:text-white transition-colors"
           >
-            <span>View Full Menu</span>
+            <span>View Full Offers</span>
             <ArrowRight
               size={18}
               className="transition-transform group-hover:translate-x-1"
@@ -96,8 +96,8 @@ export function Offers() {
               <div className="relative z-10 flex h-full flex-col justify-between p-7 sm:p-8">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-white backdrop-blur-md">
-                      <Sparkles size={12} className="text-[#F6C453]" />
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/15 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-[#F6C453] backdrop-blur-md shadow-sm">
+                      <Clock size={12} className="text-[#F6C453]" />
                       {offer.badge}
                     </span>
                   </div>
@@ -114,7 +114,7 @@ export function Offers() {
                 </div>
 
                 <Link
-                  href="/menu"
+                  href="/offers"
                   className="inline-flex w-fit items-center gap-3 rounded-full bg-white text-black px-7 py-3.5 font-bold transition-all duration-300 hover:bg-[#F6C453] hover:scale-105 active:scale-95 shadow-xl"
                 >
                   <span>{offer.button}</span>

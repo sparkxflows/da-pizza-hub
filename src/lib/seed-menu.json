@@ -331,7 +331,7 @@
   },
   {
     "id": "margherita-single-cheese",
-    "name": "Margherita",
+    "name": "Classic Margherita",
     "description": "Single cheese topping",
     "category": "simply-veg",
     "image": "/images/pizza-named/margherita.webp",
@@ -346,7 +346,7 @@
   },
   {
     "id": "margherita-cheese-tomato",
-    "name": "Margherita",
+    "name": "Cheese & Tomato Margherita",
     "description": "Cheese & tomato",
     "category": "simply-veg",
     "image": "/images/pizza-named/margherita-cheese-tomato.webp",
@@ -383,7 +383,7 @@
   },
   {
     "id": "spicy-veggie-burger",
-    "name": "Spicy Veggie",
+    "name": "Spicy Veggie Burger",
     "description": "",
     "category": "burger",
     "image": "/images/burger/spicy-veggie-burger.webp",
@@ -710,27 +710,5 @@
     "isNew": false,
     "type": "simple",
     "price": 110
-  },
-  {
-    "id": "vanilla-shake",
-    "name": "Vanilla Shake",
-    "description": "",
-    "category": "shake",
-    "image": "/images/shake/vanilla-shake.webp",
-    "isBestSeller": false,
-    "isNew": false,
-    "type": "simple",
-    "price": 80
-  },
-  {
-    "id": "chocolate-shake",
-    "name": "Chocolate Shake",
-    "description": "",
-    "category": "shake",
-    "image": "/images/shake/chocolate-shake.webp",
-    "isBestSeller": true,
-    "isNew": false,
-    "type": "simple",
-    "price": 80
   }
 ]

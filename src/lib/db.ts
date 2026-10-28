@@ -1115,16 +1115,15 @@ export async function upsertCoupon(coupon: Coupon): Promise<Coupon> {
 
 export async function patchCoupon(
   code: string,
-  patch: Partial<Pick<Coupon, "isActive" | "description" | "usedCount">>
+  patch: Partial<Coupon>
 ): Promise<Coupon | null> {
   const existing = await getCouponByCode(code);
   if (!existing) return null;
 
   return upsertCoupon({
     ...existing,
-    isActive: patch.isActive ?? existing.isActive,
-    description: patch.description ?? existing.description,
-    usedCount: patch.usedCount ?? existing.usedCount,
+    ...patch,
+    code: existing.code, // keep primary key intact
   });
 }
 
@@ -1515,32 +1514,208 @@ export async function getDatabaseHealth(): Promise<{
 
 export async function findCustomerByPhone(phone: string): Promise<Customer | null> {
   const cleanPhone = phone.replace(/\D/g, "").slice(-10);
+  const sb = getSupabaseClient();
+  if (sb) {
+    try {
+      const { data } = await sb.from("customers").select("*").eq("phone", cleanPhone).maybeSingle();
+      if (data) {
+        return {
+          id: data.id,
+          name: data.name,
+          email: data.email,
+          phone: data.phone || undefined,
+          authProvider: data.auth_provider,
+          avatarUrl: data.avatar_url,
+          createdAt: data.created_at,
+        };
+      }
+    } catch {}
+  }
   const db = readLocalDb();
   const c = db.customers.find((cust) => cust.phone && cust.phone.replace(/\D/g, "").slice(-10) === cleanPhone);
   return c ?? null;
 }
 
 export async function findCustomerById(id: string): Promise<Customer | null> {
+  const sb = getSupabaseClient();
+  if (sb) {
+    try {
+      const { data } = await sb.from("customers").select("*").eq("id", id).maybeSingle();
+      if (data) {
+        return {
+          id: data.id,
+          name: data.name,
+          email: data.email,
+          phone: data.phone || undefined,
+          authProvider: data.auth_provider,
+          avatarUrl: data.avatar_url,
+          createdAt: data.created_at,
+        };
+      }
+    } catch {}
+  }
   const db = readLocalDb();
   return db.customers.find((c) => c.id === id) ?? null;
 }
 
 export async function findCustomerByEmail(email: string): Promise<Customer | null> {
   const clean = email.trim().toLowerCase();
+  const sb = getSupabaseClient();
+  if (sb) {
+    try {
+      const { data } = await sb.from("customers").select("*").eq("email", clean).maybeSingle();
+      if (data) {
+        return {
+          id: data.id,
+          name: data.name,
+          email: data.email,
+          phone: data.phone || undefined,
+          authProvider: data.auth_provider,
+          avatarUrl: data.avatar_url,
+          createdAt: data.created_at,
+        };
+      }
+    } catch {}
+  }
   const db = readLocalDb();
   return db.customers.find((c) => c.email?.trim().toLowerCase() === clean) ?? null;
 }
 
+export interface CustomerWithStats extends Customer {
+  orderCount: number;
+  totalSpent: number;
+  lastOrderDate?: string | null;
+}
+
+export async function getAllCustomersWithStats(): Promise<CustomerWithStats[]> {
+  const sb = getSupabaseClient();
+  let customers: Customer[] = [];
+  let ordersList: any[] = [];
+
+  if (sb) {
+    try {
+      const { data: custData } = await sb
+        .from("customers")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (custData && custData.length > 0) {
+        customers = custData.map((c: any) => ({
+          id: c.id,
+          name: c.name || "Customer",
+          email: c.email || null,
+          phone: c.phone || undefined,
+          authProvider: c.auth_provider || "supabase",
+          avatarUrl: c.avatar_url || null,
+          createdAt: c.created_at || new Date().toISOString(),
+        }));
+      }
+
+      const { data: ordData } = await sb
+        .from("orders")
+        .select("id, total, customer_phone, customer_email, created_at");
+      if (ordData) {
+        ordersList = ordData;
+      }
+    } catch (e) {
+      console.error("Error fetching customers from Supabase:", e);
+    }
+  }
+
+  if (customers.length === 0) {
+    const db = readLocalDb();
+    customers = db.customers;
+    ordersList = db.orders;
+  }
+
+  return customers.map((c) => {
+    const cPhone = c.phone ? c.phone.replace(/\D/g, "").slice(-10) : "";
+    const cEmail = c.email ? c.email.trim().toLowerCase() : "";
+
+    const userOrders = ordersList.filter((o: any) => {
+      const oPhone = (o.customer_phone || o.customerPhone || "")
+        .replace(/\D/g, "")
+        .slice(-10);
+      const oEmail = (o.customer_email || o.customerEmail || "")
+        .trim()
+        .toLowerCase();
+      if (cPhone && oPhone && cPhone === oPhone) return true;
+      if (cEmail && oEmail && cEmail === oEmail) return true;
+      return false;
+    });
+
+    const totalSpent = userOrders.reduce(
+      (sum, o) => sum + (Number(o.total) || 0),
+      0
+    );
+    const lastOrderDate =
+      userOrders.length > 0
+        ? userOrders[0].created_at || userOrders[0].createdAt
+        : null;
+
+    return {
+      ...c,
+      orderCount: userOrders.length,
+      totalSpent,
+      lastOrderDate,
+    };
+  });
+}
+
 export async function createOrUpdateCustomer(data: {
+  id?: string;
   phone?: string | null;
   name?: string;
   email?: string | null;
-  authProvider?: "phone" | "supabase";
+  authProvider?: "phone" | "supabase" | "google" | string;
+  avatarUrl?: string | null;
 }): Promise<Customer> {
   const cleanPhone = data.phone ? data.phone.replace(/\D/g, "").slice(-10) : "";
   const cleanEmail = data.email?.trim().toLowerCase() || "";
-  const db = readLocalDb();
+  const cleanName = data.name?.trim() || (cleanEmail ? cleanEmail.split("@")[0] : "Customer");
+  const provider = data.authProvider || (cleanEmail ? "supabase" : "phone");
 
+  const sb = getSupabaseClient();
+  if (sb) {
+    try {
+      let existingId = data.id;
+      if (!existingId && cleanEmail) {
+        const { data: byEmail } = await sb.from("customers").select("id").eq("email", cleanEmail).maybeSingle();
+        if (byEmail?.id) existingId = byEmail.id;
+      }
+      if (!existingId && cleanPhone) {
+        const { data: byPhone } = await sb.from("customers").select("id").eq("phone", cleanPhone).maybeSingle();
+        if (byPhone?.id) existingId = byPhone.id;
+      }
+
+      const id = existingId || `cust_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+      const payload: any = {
+        id,
+        name: cleanName,
+        email: cleanEmail || null,
+        phone: cleanPhone || null,
+        auth_provider: provider,
+      };
+      if (data.avatarUrl) payload.avatar_url = data.avatarUrl;
+
+      const { data: saved, error } = await sb.from("customers").upsert(payload).select().single();
+      if (!error && saved) {
+        return {
+          id: saved.id,
+          name: saved.name,
+          email: saved.email,
+          phone: saved.phone || undefined,
+          authProvider: saved.auth_provider,
+          avatarUrl: saved.avatar_url,
+          createdAt: saved.created_at,
+        };
+      }
+    } catch (e) {
+      console.error("Supabase customer upsert error:", e);
+    }
+  }
+
+  const db = readLocalDb();
   let existing = db.customers.find((c) => {
     if (cleanEmail && c.email?.trim().toLowerCase() === cleanEmail) return true;
     if (cleanPhone && c.phone && c.phone.replace(/\D/g, "").slice(-10) === cleanPhone) return true;
@@ -1548,20 +1723,22 @@ export async function createOrUpdateCustomer(data: {
   });
 
   if (existing) {
-    if (data.name && data.name.trim()) existing.name = data.name.trim();
+    if (cleanName) existing.name = cleanName;
     if (cleanEmail) existing.email = cleanEmail;
     if (cleanPhone) existing.phone = cleanPhone;
-    if (data.authProvider) existing.authProvider = data.authProvider;
+    if (provider) existing.authProvider = provider;
+    if (data.avatarUrl) existing.avatarUrl = data.avatarUrl;
     writeLocalDb(db);
     return existing;
   }
 
   const newCust: Customer = {
-    id: `cust_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+    id: data.id || `cust_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
     phone: cleanPhone || undefined,
-    name: data.name?.trim() || (cleanEmail ? cleanEmail.split("@")[0] : "Pizza Lover"),
+    name: cleanName,
     email: cleanEmail || null,
-    authProvider: data.authProvider || (cleanEmail ? "supabase" : "phone"),
+    authProvider: provider,
+    avatarUrl: data.avatarUrl || null,
     createdAt: new Date().toISOString(),
   };
 
@@ -1624,13 +1801,37 @@ export async function deleteCustomerAddress(
   return false;
 }
 
-export async function getCustomerOrders(phone?: string, name?: string): Promise<Order[]> {
+export async function getCustomerOrders(
+  phone?: string,
+  name?: string,
+  email?: string | null
+): Promise<Order[]> {
   const cleanPhone = phone ? phone.replace(/\D/g, "").slice(-10) : "";
   const cleanName = name ? name.trim().toLowerCase() : "";
-  const db = readLocalDb();
-  return db.orders.filter((o) => {
-    if (cleanPhone && o.customerPhone.replace(/\D/g, "").slice(-10) === cleanPhone) return true;
-    if (cleanName && o.customerName.trim().toLowerCase() === cleanName) return true;
+  const cleanEmail = email ? email.trim().toLowerCase() : "";
+  const allOrders = await getOrders();
+  return allOrders.filter((o) => {
+    if (
+      cleanPhone &&
+      o.customerPhone &&
+      o.customerPhone.replace(/\D/g, "").slice(-10) === cleanPhone
+    ) {
+      return true;
+    }
+    if (
+      cleanEmail &&
+      o.customerEmail &&
+      o.customerEmail.trim().toLowerCase() === cleanEmail
+    ) {
+      return true;
+    }
+    if (
+      cleanName &&
+      o.customerName &&
+      o.customerName.trim().toLowerCase() === cleanName
+    ) {
+      return true;
+    }
     return false;
   });
 }

@@ -804,6 +804,7 @@ export function CheckoutClient({ branches }: { branches: Branch[] }) {
           orderType: "delivery",
           customerName: name,
           customerPhone: phone,
+          customerEmail: customer?.email || undefined,
           deliveryAddress: address,
           items: lines,
           subtotal,

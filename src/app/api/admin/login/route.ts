@@ -2,35 +2,38 @@ import { NextResponse } from "next/server";
 import {
   ADMIN_COOKIE_NAME,
   createAdminSessionToken,
-  isPasswordConfigured,
-  verifyAdminPassword,
+  verifyAdminPasswordWithRole,
 } from "@/lib/admin-auth";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
-    if (!isPasswordConfigured()) {
+    const body = await req.json();
+    const password = String(body.password ?? "");
+
+    const authResult = verifyAdminPasswordWithRole(password);
+    if (!authResult.success || !authResult.role) {
       return NextResponse.json(
         {
           success: false,
           message:
-            "Admin password is not set. Please add the ADMIN_PASSWORD environment variable in Vercel Project Settings.",
+            "Incorrect password. Please enter a valid Admin or Super Admin password.",
         },
-        { status: 503 }
-      );
-    }
-
-    const body = await req.json();
-    const password = String(body.password ?? "");
-
-    if (!verifyAdminPassword(password)) {
-      return NextResponse.json(
-        { success: false, message: "Incorrect password." },
         { status: 401 }
       );
     }
 
-    const token = createAdminSessionToken();
-    const res = NextResponse.json({ success: true, token });
+    const token = createAdminSessionToken(authResult.role);
+    const res = NextResponse.json({
+      success: true,
+      token,
+      role: authResult.role,
+      message:
+        authResult.role === "super_admin"
+          ? "Logged in as Super Admin"
+          : "Logged in as Store Admin",
+    });
 
     const proto = req.headers.get("x-forwarded-proto") ?? "";
     const isHttps = proto.includes("https") || req.url.startsWith("https://");

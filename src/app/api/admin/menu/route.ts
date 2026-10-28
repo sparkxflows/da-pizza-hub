@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { isAdminAuthenticated, isSuperAdminAuthenticated } from "@/lib/admin-auth";
 import {
   deleteMenuItem,
   getMenuItems,

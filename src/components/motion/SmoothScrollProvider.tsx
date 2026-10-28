@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 
 export function SmoothScrollProvider({
@@ -8,9 +9,15 @@ export function SmoothScrollProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
+    // Disable smooth scrolling on admin routes for instant native interaction
+    if (pathname?.startsWith("/admin")) {
+      return;
+    }
+
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
     }
@@ -36,7 +43,7 @@ export function SmoothScrollProvider({
       lenis.destroy();
       lenisRef.current = null;
     };
-  }, []);
+  }, [pathname]);
 
   return <>{children}</>;
 }

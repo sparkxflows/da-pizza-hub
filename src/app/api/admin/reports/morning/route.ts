@@ -12,37 +12,68 @@ export async function GET(req: Request) {
     );
   }
 
+  const { searchParams } = new URL(req.url);
+  const period = searchParams.get("period") || "today"; // "today" | "yesterday" | "week" | "month"
+
   const allOrders = await getOrders();
-  const startOfToday = new Date();
-  startOfToday.setHours(0, 0, 0, 0);
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const startOfYesterday = new Date(startOfToday.getTime() - 86400000);
 
-  const yesterdayOrders = allOrders.filter((o) => {
+  let startTime: number;
+  let endTime: number = Date.now();
+  let periodLabel = "Today";
+
+  if (period === "yesterday") {
+    startTime = startOfYesterday.getTime();
+    endTime = startOfToday.getTime();
+    periodLabel = "Yesterday";
+  } else if (period === "week") {
+    startTime = startOfToday.getTime() - 6 * 86400000;
+    periodLabel = "Last 7 Days (Per Week)";
+  } else if (period === "month") {
+    startTime = startOfToday.getTime() - 29 * 86400000;
+    periodLabel = "Last 30 Days (Per Month)";
+  } else {
+    // "today" (default)
+    startTime = startOfToday.getTime();
+    periodLabel = "Today (Per Day)";
+  }
+
+  const periodOrders = allOrders.filter((o) => {
     const t = new Date(o.createdAt).getTime();
-    return t >= startOfYesterday.getTime() && t < startOfToday.getTime();
+    return t >= startTime && t <= endTime;
   });
 
   const priorPhones = new Set(
     allOrders
-      .filter((o) => new Date(o.createdAt).getTime() < startOfYesterday.getTime())
+      .filter((o) => new Date(o.createdAt).getTime() < startTime)
       .map((o) => o.customerPhone)
   );
 
   let revenue = 0;
   let validOrderCount = 0;
   let cancelledOrders = 0;
-  const yesterdayPhones = new Set<string>();
+  let codRevenue = 0;
+  let upiRevenue = 0;
+  const periodPhones = new Set<string>();
   const itemTallies = new Map<string, number>();
   const branchTallies = new Map<string, { revenue: number; orders: number }>();
 
-  for (const ord of yesterdayOrders) {
+  for (const ord of periodOrders) {
     if (ord.status === "cancelled") {
       cancelledOrders++;
       continue;
     }
     validOrderCount++;
     revenue += ord.total;
-    yesterdayPhones.add(ord.customerPhone);
+    if (ord.paymentMethod === "cod") {
+      codRevenue += ord.total;
+    } else {
+      upiRevenue += ord.total;
+    }
+
+    periodPhones.add(ord.customerPhone);
 
     for (const line of ord.items) {
       itemTallies.set(
@@ -59,7 +90,7 @@ export async function GET(req: Request) {
 
   let newCustomers = 0;
   let repeatCustomers = 0;
-  for (const phone of yesterdayPhones) {
+  for (const phone of periodPhones) {
     if (priorPhones.has(phone)) repeatCustomers++;
     else newCustomers++;
   }
@@ -70,7 +101,7 @@ export async function GET(req: Request) {
   const topItems = Array.from(itemTallies.entries())
     .map(([name, quantity]) => ({ name, quantity }))
     .sort((a, b) => b.quantity - a.quantity)
-    .slice(0, 5);
+    .slice(0, 6);
 
   const branchBreakdown = Array.from(branchTallies.entries())
     .map(([branchId, stats]) => ({
@@ -82,8 +113,12 @@ export async function GET(req: Request) {
 
   return NextResponse.json({
     success: true,
-    reportDate: startOfYesterday.toISOString(),
+    period,
+    periodLabel,
+    reportDate: new Date(startTime).toISOString(),
     revenue,
+    codRevenue,
+    upiRevenue,
     orders: validOrderCount,
     averageOrderValue,
     newCustomers,

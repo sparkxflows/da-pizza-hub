@@ -9,7 +9,6 @@ import {
   MessageCircle,
   ExternalLink,
   MapPin,
-  Sparkles,
 } from "lucide-react";
 import { Reveal } from "@/components/motion/Reveal";
 
@@ -76,11 +75,10 @@ export function InstagramGallery() {
         <Reveal>
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-14 gap-6">
             <div>
-              <div className="flex items-center gap-2 mb-3">
+              <div className="mb-3">
                 <span className="text-xs uppercase tracking-[0.35em] text-[#F6C453] font-semibold">
                   OFFICIAL HANSI COMMUNITY
                 </span>
-                <Sparkles size={14} className="text-[#F6C453]" />
               </div>
               <h2 className="font-heading text-4xl sm:text-5xl text-white flex items-center gap-3 flex-wrap">
                 <span>@da_pizzahub_hansi</span>

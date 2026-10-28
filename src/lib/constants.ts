@@ -125,9 +125,6 @@ export const MENU_CATEGORY_GROUPS: {
       { key: "wrap", label: "Wraps" },
       { key: "bread", label: "Garlic Bread" },
       { key: "sides-other", label: "Snacks" },
-      { key: "shake", label: "Shakes" },
-      { key: "mocktail", label: "Mocktails" },
-      { key: "dessert", label: "Desserts" },
     ],
   },
 ];

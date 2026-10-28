@@ -31,16 +31,16 @@ const BRANCH_IMAGES = [
 
 function SwiggyIcon() {
   return (
-    <span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-[#FC8019] text-white text-[10px] font-bold shrink-0">
-      S
+    <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded-md bg-[#FC8019] text-white text-[10px] font-bold shadow-sm shrink-0">
+      swiggy
     </span>
   );
 }
 
 function ZomatoIcon() {
   return (
-    <span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-[#E23744] text-white text-[10px] font-bold shrink-0">
-      Z
+    <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded-md bg-[#CB202D] text-white text-[10px] font-black italic tracking-tighter shadow-sm shrink-0">
+      zomato
     </span>
   );
 }

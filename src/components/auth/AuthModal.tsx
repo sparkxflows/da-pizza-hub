@@ -2,445 +2,336 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Smartphone, Mail, KeyRound, User, ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
+import {
+  X,
+  Mail,
+  User,
+  ArrowRight,
+  CheckCircle2,
+  Lock,
+  Phone,
+} from "lucide-react";
 import { useCustomerStore } from "@/lib/customer-store";
+import { supabase } from "@/lib/supabase-client";
+
+function GoogleSvg() {
+  return (
+    <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
+      <path
+        fill="#4285F4"
+        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+      />
+    </svg>
+  );
+}
 
 export function AuthModal() {
-  const { isAuthModalOpen, authModalTab, closeAuthModal, setCustomer, fetchAddresses } = useCustomerStore();
-  
-  const [tab, setTab] = useState<"phone" | "supabase">(authModalTab || "phone");
-  const [phoneStep, setPhoneStep] = useState<"input" | "otp">("input");
-  
-  // Phone Form State
-  const [phone, setPhone] = useState("");
-  const [name, setName] = useState("");
-  const [otp, setOtp] = useState("");
-  const [devOtp, setDevOtp] = useState<string | null>(null);
-  const [phoneLoading, setPhoneLoading] = useState(false);
-  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const {
+    isAuthModalOpen,
+    closeAuthModal,
+    setCustomer,
+    fetchAddresses,
+  } = useCustomerStore();
 
-  // Supabase Form State
   const [isSignUp, setIsSignUp] = useState(false);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [supabaseLoading, setSupabaseLoading] = useState(false);
-  const [supabaseError, setSupabaseError] = useState<string | null>(null);
 
+  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   if (!isAuthModalOpen) return null;
 
-  async function handleSendOtp(e: React.FormEvent) {
-    e.preventDefault();
-    setPhoneError(null);
-    const cleanPhone = phone.replace(/\D/g, "").slice(-10);
-    if (cleanPhone.length !== 10) {
-      setPhoneError("Please enter a valid 10-digit Indian mobile number.");
-      return;
-    }
-
-    setPhoneLoading(true);
+  async function handleGoogleLogin() {
+    setGoogleLoading(true);
+    setAuthError(null);
     try {
-      const res = await fetch("/api/customer/auth/phone", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "send_otp", phone: cleanPhone }),
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
       });
-      const data = await res.json();
-      if (data.success) {
-        setDevOtp(data.devOtp || "1234");
-        setPhoneStep("otp");
-      } else {
-        setPhoneError(data.message || "Failed to send OTP.");
+      if (error) {
+        setAuthError(error.message);
       }
-    } catch {
-      setPhoneError("Network error. Please try again.");
+    } catch (err: any) {
+      setAuthError(err?.message || "Google sign-in failed.");
     } finally {
-      setPhoneLoading(false);
+      setGoogleLoading(false);
     }
   }
 
-  async function handleVerifyOtp(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setPhoneError(null);
-    if (!otp.trim()) {
-      setPhoneError("Please enter the 4-digit OTP.");
-      return;
-    }
+    setAuthError(null);
+    setLoading(true);
 
-    setPhoneLoading(true);
-    try {
-      const res = await fetch("/api/customer/auth/phone", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "verify_otp",
-          phone: phone.replace(/\D/g, "").slice(-10),
-          code: otp.trim(),
-          name: name.trim() || undefined,
-        }),
-      });
-      const data = await res.json();
-      if (data.success && data.customer) {
-        setCustomer(data.customer);
-        fetchAddresses();
-        setSuccessMsg("Welcome to Da Pizza Hub!");
-        setTimeout(() => {
-          closeAuthModal();
-          setSuccessMsg(null);
-          setPhoneStep("input");
-          setOtp("");
-        }, 1200);
-      } else {
-        setPhoneError(data.message || "Invalid OTP code.");
-      }
-    } catch {
-      setPhoneError("Failed to verify OTP.");
-    } finally {
-      setPhoneLoading(false);
-    }
-  }
-
-  async function handleSupabaseSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSupabaseError(null);
-    if (!email.includes("@")) {
-      setSupabaseError("Please enter a valid email address.");
-      return;
-    }
-    if (password.length < 6) {
-      setSupabaseError("Password must be at least 6 characters.");
-      return;
-    }
-
-    setSupabaseLoading(true);
     try {
       const res = await fetch("/api/customer/auth/supabase", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: isSignUp ? "signup" : "signin",
-          email,
+          name: isSignUp ? name.trim() : undefined,
+          phone: isSignUp ? phone.trim() : undefined,
+          email: email.trim().toLowerCase(),
           password,
-          name: name.trim() || undefined,
-          phone: phone.trim() || undefined,
         }),
       });
+
       const data = await res.json();
-      if (data.success && data.customer) {
-        setCustomer(data.customer);
-        fetchAddresses();
-        setSuccessMsg(isSignUp ? "Account created successfully!" : "Signed in successfully!");
-        setTimeout(() => {
-          closeAuthModal();
-          setSuccessMsg(null);
-        }, 1200);
-      } else {
-        setSupabaseError(data.message || "Authentication failed.");
+      if (!res.ok || !data.success) {
+        setAuthError(data.message || "Authentication failed.");
+        return;
       }
+
+      setCustomer(data.customer);
+      fetchAddresses();
+      setSuccessMsg(
+        isSignUp
+          ? "Account created successfully!"
+          : `Welcome back, ${data.customer.name}!`
+      );
+      setTimeout(() => {
+        closeAuthModal();
+        setSuccessMsg(null);
+      }, 1200);
     } catch {
-      setSupabaseError("Network error. Please try again.");
+      setAuthError("Network error. Please try again.");
     } finally {
-      setSupabaseLoading(false);
+      setLoading(false);
     }
   }
 
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        {/* Backdrop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={closeAuthModal}
+        className="fixed inset-0 bg-black/80 backdrop-blur-md"
+      />
+
+      {/* Modal Dialog */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 15 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 15 }}
+        className="relative z-10 w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-[#121212] p-6 sm:p-8 shadow-2xl"
+      >
+        {/* Close Button */}
+        <button
           onClick={closeAuthModal}
-          className="fixed inset-0 bg-black/80 backdrop-blur-md"
-        />
-
-        {/* Modal Window */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 15 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 15 }}
-          transition={{ duration: 0.25 }}
-          className="relative w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-[#121212] p-6 sm:p-8 shadow-[0_25px_60px_rgba(0,0,0,0.8)] z-10"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-white/60 hover:bg-white/10 hover:text-white transition"
+          aria-label="Close"
         >
-          {/* Close button */}
-          <button
-            onClick={closeAuthModal}
-            className="absolute top-5 right-5 flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-white/60 transition hover:bg-white/10 hover:text-white"
-          >
-            <X size={18} />
-          </button>
+          <X size={18} />
+        </button>
 
-          {/* Success Notification */}
-          {successMsg ? (
-            <div className="py-12 text-center">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400"
-              >
-                <CheckCircle2 size={36} />
-              </motion.div>
-              <h3 className="font-heading text-2xl text-white">{successMsg}</h3>
-              <p className="mt-2 text-sm text-ink-secondary">Logging you into your account...</p>
-            </div>
-          ) : (
+        {/* Modal Header */}
+        <div className="text-center mb-6">
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#F6C453]">
+            DA PIZZA HUB ACCOUNT
+          </span>
+          <h2 className="mt-1 font-heading text-2xl font-bold text-white">
+            {isSignUp ? "Create Your Account" : "Sign In to Da Pizza Hub"}
+          </h2>
+          <p className="mt-1 text-xs text-white/50">
+            {isSignUp
+              ? "Join us to save addresses and track live orders."
+              : "Sign in with Google or your email & password."}
+          </p>
+        </div>
+
+        {/* Success Alert */}
+        {successMsg && (
+          <div className="mb-4 flex items-center gap-2 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 p-3 text-xs font-semibold text-emerald-400">
+            <CheckCircle2 size={16} />
+            <span>{successMsg}</span>
+          </div>
+        )}
+
+        {/* Error Alert */}
+        {authError && (
+          <div className="mb-4 rounded-2xl bg-red-500/15 border border-red-500/30 p-3 text-xs text-red-400">
+            {authError}
+          </div>
+        )}
+
+        {/* 1. Supabase Continue with Google (One-Click) */}
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          disabled={googleLoading || loading}
+          className="flex h-11 w-full items-center justify-center gap-2.5 rounded-2xl border border-white/15 bg-white/5 text-xs font-bold text-white transition hover:bg-white/10 hover:border-white/30 disabled:opacity-50"
+        >
+          <GoogleSvg />
+          <span>
+            {googleLoading ? "Connecting to Google..." : "Continue with Google"}
+          </span>
+        </button>
+
+        {/* Divider */}
+        <div className="relative my-5">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-white/10" />
+          </div>
+          <div className="relative flex justify-center text-[10px] uppercase">
+            <span className="bg-[#121212] px-3 text-white/40 tracking-wider font-semibold">
+              or with email &amp; password
+            </span>
+          </div>
+        </div>
+
+        {/* 2. Email & Password Form */}
+        <form onSubmit={handleSubmit} className="space-y-3">
+          {isSignUp && (
             <>
-              {/* Header */}
-              <div className="mb-6">
-                <span className="text-[10px] font-bold tracking-[0.25em] text-[#F6C453] uppercase">
-                  Da Pizza Hub • Hansi
-                </span>
-                <h3 className="mt-1 font-heading text-2xl sm:text-3xl font-semibold text-white">
-                  Customer Sign In
-                </h3>
-                <p className="mt-1 text-xs text-ink-secondary">
-                  Access saved addresses, past bills &amp; 1-click reorder
-                </p>
-              </div>
-
-              {/* Tabs: Phone vs Supabase */}
-              <div className="mb-6 grid grid-cols-2 rounded-2xl bg-white/5 p-1 border border-white/5">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setTab("phone");
-                    setPhoneError(null);
-                  }}
-                  className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-xs font-semibold transition ${
-                    tab === "phone"
-                      ? "bg-gradient-to-r from-[#D91F26] to-[#FF6B00] text-white shadow-md"
-                      : "text-white/60 hover:text-white"
-                  }`}
-                >
-                  <Smartphone size={15} />
-                  Phone (OTP)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setTab("supabase");
-                    setSupabaseError(null);
-                  }}
-                  className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-xs font-semibold transition ${
-                    tab === "supabase"
-                      ? "bg-gradient-to-r from-[#D91F26] to-[#FF6B00] text-white shadow-md"
-                      : "text-white/60 hover:text-white"
-                  }`}
-                >
-                  <KeyRound size={15} />
-                  Supabase (Email)
-                </button>
-              </div>
-
-              {/* TAB 1: PHONE OTP */}
-              {tab === "phone" && (
-                <div>
-                  {phoneStep === "input" ? (
-                    <form onSubmit={handleSendOtp} className="space-y-4">
-                      <div>
-                        <label className="block text-xs font-medium text-white/70 mb-1.5">
-                          Your Name (Optional)
-                        </label>
-                        <div className="relative">
-                          <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40" />
-                          <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="e.g. Rahul Sharma"
-                            className="w-full rounded-2xl border border-white/10 bg-white/5 pl-10 pr-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-[#D91F26] focus:outline-none focus:ring-1 focus:ring-[#D91F26]"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-medium text-white/70 mb-1.5">
-                          Mobile Number <span className="text-[#D91F26]">*</span>
-                        </label>
-                        <div className="relative flex rounded-2xl border border-white/10 bg-white/5 focus-within:border-[#D91F26] focus-within:ring-1 focus-within:ring-[#D91F26]">
-                          <span className="flex items-center pl-3.5 pr-2 text-sm font-semibold text-[#F6C453]">
-                            +91
-                          </span>
-                          <input
-                            type="tel"
-                            maxLength={10}
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
-                            placeholder="99112 73199"
-                            required
-                            className="w-full bg-transparent pr-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none"
-                          />
-                        </div>
-                      </div>
-
-                      {phoneError && (
-                        <p className="rounded-xl bg-red-500/10 border border-red-500/20 px-3 py-2 text-xs text-red-400">
-                          {phoneError}
-                        </p>
-                      )}
-
-                      <button
-                        type="submit"
-                        disabled={phoneLoading}
-                        className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#D91F26] to-[#FF6B00] py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#D91F26]/20 transition hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-                      >
-                        {phoneLoading ? "Sending OTP..." : "Get OTP Verification Code"}
-                        <ArrowRight size={16} />
-                      </button>
-                    </form>
-                  ) : (
-                    <form onSubmit={handleVerifyOtp} className="space-y-4">
-                      <div className="rounded-2xl border border-white/10 bg-white/5 p-3.5 flex items-center justify-between text-xs">
-                        <div>
-                          <span className="text-white/60">OTP sent to:</span>{" "}
-                          <span className="font-semibold text-white">+91 {phone}</span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setPhoneStep("input")}
-                          className="text-[#F6C453] hover:underline"
-                        >
-                          Change
-                        </button>
-                      </div>
-
-                      {devOtp && (
-                        <div className="rounded-xl bg-[#F6C453]/10 border border-[#F6C453]/20 px-3 py-2 text-center text-xs text-[#F6C453]">
-                          ✨ Demo OTP: <strong className="font-mono text-sm tracking-wider">{devOtp}</strong> (or use <strong>1234</strong>)
-                        </div>
-                      )}
-
-                      <div>
-                        <label className="block text-xs font-medium text-white/70 mb-1.5 text-center">
-                          Enter 4-Digit Verification Code
-                        </label>
-                        <input
-                          type="text"
-                          maxLength={6}
-                          value={otp}
-                          autoFocus
-                          onChange={(e) => setOtp(e.target.value)}
-                          placeholder="• • • •"
-                          className="w-full text-center tracking-[0.5em] font-mono text-2xl font-bold rounded-2xl border border-white/10 bg-white/5 py-3 text-white placeholder:text-white/20 focus:border-[#D91F26] focus:outline-none focus:ring-1 focus:ring-[#D91F26]"
-                        />
-                      </div>
-
-                      {phoneError && (
-                        <p className="rounded-xl bg-red-500/10 border border-red-500/20 px-3 py-2 text-xs text-red-400 text-center">
-                          {phoneError}
-                        </p>
-                      )}
-
-                      <button
-                        type="submit"
-                        disabled={phoneLoading}
-                        className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#D91F26] to-[#FF6B00] py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#D91F26]/20 transition hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-                      >
-                        {phoneLoading ? "Verifying..." : "Verify & Sign In"}
-                        <ShieldCheck size={16} />
-                      </button>
-                    </form>
-                  )}
+              <div>
+                <label className="block text-[11px] font-semibold text-white/70 mb-1">
+                  Full Name
+                </label>
+                <div className="relative">
+                  <User
+                    size={14}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30"
+                  />
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Enter your name"
+                    className="h-10 w-full rounded-xl border border-white/10 bg-black/40 pl-9 pr-3 text-xs text-white placeholder:text-white/25 focus:border-[#D91F26] outline-none transition"
+                  />
                 </div>
-              )}
+              </div>
 
-              {/* TAB 2: SUPABASE AUTH */}
-              {tab === "supabase" && (
-                <form onSubmit={handleSupabaseSubmit} className="space-y-4">
-                  {isSignUp && (
-                    <div>
-                      <label className="block text-xs font-medium text-white/70 mb-1.5">
-                        Full Name
-                      </label>
-                      <div className="relative">
-                        <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40" />
-                        <input
-                          type="text"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          placeholder="e.g. Rahul Sharma"
-                          className="w-full rounded-2xl border border-white/10 bg-white/5 pl-10 pr-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-[#D91F26] focus:outline-none"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  <div>
-                    <label className="block text-xs font-medium text-white/70 mb-1.5">
-                      Email Address <span className="text-[#D91F26]">*</span>
-                    </label>
-                    <div className="relative">
-                      <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40" />
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="you@example.com"
-                        required
-                        className="w-full rounded-2xl border border-white/10 bg-white/5 pl-10 pr-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-[#D91F26] focus:outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-white/70 mb-1.5">
-                      Password (min 6 characters) <span className="text-[#D91F26]">*</span>
-                    </label>
-                    <div className="relative">
-                      <KeyRound size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40" />
-                      <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="••••••••"
-                        required
-                        className="w-full rounded-2xl border border-white/10 bg-white/5 pl-10 pr-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-[#D91F26] focus:outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  {supabaseError && (
-                    <p className="rounded-xl bg-red-500/10 border border-red-500/20 px-3 py-2 text-xs text-red-400">
-                      {supabaseError}
-                    </p>
-                  )}
-
-                  <button
-                    type="submit"
-                    disabled={supabaseLoading}
-                    className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#D91F26] to-[#FF6B00] py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#D91F26]/20 transition hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-                  >
-                    {supabaseLoading
-                      ? "Connecting Supabase..."
-                      : isSignUp
-                      ? "Create Supabase Account"
-                      : "Sign In with Supabase"}
-                    <ArrowRight size={16} />
-                  </button>
-
-                  <div className="text-center pt-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsSignUp(!isSignUp);
-                        setSupabaseError(null);
-                      }}
-                      className="text-xs text-ink-secondary hover:text-white transition"
-                    >
-                      {isSignUp
-                        ? "Already have an account? Sign In"
-                        : "New to Da Pizza Hub? Create an Account"}
-                    </button>
-                  </div>
-                </form>
-              )}
+              <div>
+                <label className="block text-[11px] font-semibold text-white/70 mb-1">
+                  Mobile Number (Optional)
+                </label>
+                <div className="relative">
+                  <Phone
+                    size={14}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30"
+                  />
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="10-digit mobile number"
+                    className="h-10 w-full rounded-xl border border-white/10 bg-black/40 pl-9 pr-3 text-xs text-white placeholder:text-white/25 focus:border-[#D91F26] outline-none transition"
+                  />
+                </div>
+              </div>
             </>
           )}
-        </motion.div>
-      </div>
-    </AnimatePresence>
+
+          <div>
+            <label className="block text-[11px] font-semibold text-white/70 mb-1">
+              Email Address
+            </label>
+            <div className="relative">
+              <Mail
+                size={14}
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30"
+              />
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="name@example.com"
+                className="h-10 w-full rounded-xl border border-white/10 bg-black/40 pl-9 pr-3 text-xs text-white placeholder:text-white/25 focus:border-[#D91F26] outline-none transition"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-semibold text-white/70 mb-1">
+              Password
+            </label>
+            <div className="relative">
+              <Lock
+                size={14}
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30"
+              />
+              <input
+                type="password"
+                required
+                minLength={6}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="At least 6 characters"
+                className="h-10 w-full rounded-xl border border-white/10 bg-black/40 pl-9 pr-3 text-xs text-white placeholder:text-white/25 focus:border-[#D91F26] outline-none transition"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading || googleLoading}
+            className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#D91F26] to-[#FF6B00] text-xs font-bold text-white shadow-lg transition hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+          >
+            <span>
+              {loading
+                ? "Please wait..."
+                : isSignUp
+                ? "Create Account"
+                : "Sign In"}
+            </span>
+            <ArrowRight size={14} />
+          </button>
+        </form>
+
+        {/* Toggle between Sign In and Sign Up */}
+        <div className="mt-5 text-center">
+          <button
+            type="button"
+            onClick={() => {
+              setIsSignUp(!isSignUp);
+              setAuthError(null);
+            }}
+            className="text-xs text-white/60 hover:text-white transition"
+          >
+            {isSignUp ? (
+              <>
+                Already have an account?{" "}
+                <span className="font-bold text-[#F6C453] underline ml-1">
+                  Sign In
+                </span>
+              </>
+            ) : (
+              <>
+                New customer?{" "}
+                <span className="font-bold text-[#F6C453] underline ml-1">
+                  Create an Account
+                </span>
+              </>
+            )}
+          </button>
+        </div>
+      </motion.div>
+    </div>
   );
 }

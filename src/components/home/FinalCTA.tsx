@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  Sparkles,
   ShoppingBag,
   ArrowRight,
   Phone,
@@ -61,8 +60,7 @@ export function FinalCTA({ primaryBranch }: { primaryBranch: Branch }) {
       >
         <div className="mx-auto max-w-5xl text-center">
           <motion.div variants={itemVariants}>
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#F6C453]/20 bg-[#F6C453]/10 px-6 py-3 backdrop-blur-xl">
-              <Sparkles size={16} className="text-[#F6C453]" />
+            <div className="inline-flex items-center rounded-full border border-[#F6C453]/20 bg-[#F6C453]/10 px-6 py-3 backdrop-blur-xl">
               <span className="text-xs font-semibold uppercase tracking-[0.35em] text-[#F6C453]">
                 Fresh • Hot • Pure Veg • Hansi
               </span>

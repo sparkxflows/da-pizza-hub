@@ -99,6 +99,27 @@ html.lenis body {
   color: #7a7a7a;
 }
 
+/* Smooth continuous marquee for automatic loop */
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-infinite {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 36s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-infinite:hover {
+  animation-play-state: paused;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

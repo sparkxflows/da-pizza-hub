@@ -19,6 +19,16 @@ export function getAdminToken(): string | null {
   return localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY);
 }
 
+export type ClientAdminRole = "super_admin" | "admin";
+
+export function getClientAdminRole(): ClientAdminRole | null {
+  const token = getAdminToken();
+  if (!token) return null;
+  if (token === "dph_super_admin_v1") return "super_admin";
+  if (token === "dph_staff_authenticated_v1") return "admin";
+  return null;
+}
+
 export async function adminFetch(
   input: string,
   init: RequestInit = {}
